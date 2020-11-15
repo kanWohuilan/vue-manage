@@ -30,8 +30,8 @@
       <el-table-column type="index"> </el-table-column>
       <el-table-column label="参数属性" prop="attr_name"> </el-table-column>
       <el-table-column label="操作" > 
-        <template >
-         <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditDialog"> 编辑</el-button>
+        <template #default ="scope">
+         <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditDialog(scope.row.attr_id)"> 编辑</el-button>
          <el-button type="danger" icon="el-icon-delete" size="mini"> 删除</el-button>
         </template>
       </el-table-column>
@@ -46,8 +46,8 @@
       <el-table-column type="index"> </el-table-column>
       <el-table-column label="属性名称" prop="attr_name"> </el-table-column>
       <el-table-column label="操作" > 
-        <template >
-         <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditDialog"> 编辑</el-button>
+        <template #default ="scope">
+         <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditDialog(scope.row.attr_id)"> 编辑</el-button>
          <el-button type="danger" icon="el-icon-delete" size="mini"> 删除</el-button>
         </template>
       </el-table-column>
@@ -217,26 +217,40 @@ created() {
     })
       })
     },
-    // editparams() {
-    //   this.$refs.form2.validate(valid => {
-    //     if(!valid) {
-    //       return
-    //     }
-    //      this.$http.post(`categories/${this.cateId}/attributes`,{attr_name:this.addCateForm.attr_name, attr_sel: this.activeName}).then(res => {
-    //    console.log(res);
-    //        if (res.data.meta.status !== 201) {
+    editparams() {
+      this.$refs.form2.validate(valid => {
+        if(!valid) {
+          console.log('验证成功')
+          return ;
+        }
+         this.$http.put(`categories/${this.cateId}/attributes/${this.editCateForm.attr_id}`,{attr_name:this.editCateForm.attr_name, attr_sel: this.activeName}).then(res => {
+       console.log(res);
+           if (res.data.meta.status !== 200) {
           
-    //       this.$message.error("添加失败");
-    //       return;
-    //     }
-    //      this.$message.success("添加成功");
-    //   this. rightDialog = false
-    //    this.getlist()
-    // })
-    //   })
-    // },
-    showEditDialog() {
+          this.$message.error("修改失败");
+          return;
+        }
+         this.$message.success("修改成功");
+      this. rightDialog = false
+       this.getlist()
+    })
+      })
+    },
+    showEditDialog(id) {
 this.editDialog =true
+this.$http.get(`categories/${this.cateId}/attributes/${id}`,{params: {
+  attr_sel: this.activeName
+}}).then(res => {
+       console.log(res);
+           if (res.data.meta.status !== 200) {
+          
+          this.$message.error("添加失败");
+          return;
+        }
+         this.$message.success("添加成功");
+      this.editCateForm = res.data.data
+    })
+    
     }
   }
   
